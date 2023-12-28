@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 from decision_transformer.d4rl_infos import REF_MIN_SCORE, REF_MAX_SCORE, D4RL_DATASET_STATS
+import pandas as pd
 
 def discount_cumsum(x, gamma):
 
@@ -26,7 +27,7 @@ def get_d4rl_dataset_stats(env_d4rl_name):
 
 
 def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
-                    num_eval_ep=10, max_test_ep_len=20,
+                    num_eval_ep=1, max_test_ep_len=60,
                     state_mean=None, state_std=None, render=False):
     
     eval_batch_size = 1  # Tamaño del lote para evaluación
@@ -51,11 +52,16 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
             running_state = running_state.astype(np.float64)
             running_reward = 0
             running_rtg = rtg_target / rtg_scale
-            
+            winner_df= pd.DataFrame()
+            all_winner_df =   pd.DataFrame()
+            i=0
             for t in range(max_test_ep_len):
                 running_state = running_state.astype(np.float64)
-                states[0, t] = torch.from_numpy(running_state).to(device)
+                #states[0, t] = torch.from_numpy(running_state).to(device)
+                states[0, t] = torch.from_numpy(np.array([running_state])).to(device)
+
                 states[0, t] = (states[0, t] - state_mean) / state_std
+                i+=1
 
                 if t < context_len:
                     _, act_preds, _ = model.forward(timesteps[:,:context_len], states[:,:context_len], actions[:,:context_len], rewards_to_go[:,:context_len], bandera=1)
@@ -69,10 +75,16 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
                 predicted_action = torch.argmax(act_preds[0, -1])                                   # predicted_action es ahora un tensor que contiene el índice de la acción con la puntuación más alta.
 
                 
-                
+                print(env.snapshot)
                 action_to_take = predicted_action.item()  
                 print("accion escogida", action_to_take)
+                print("i",i)
+                
                 running_state, running_reward, done, _, total_cost= env.step(action_to_take)
+                print("coste de accion asociada", running_state)
+                #print(env.snapshot)
+                all_winner_df=env.all_winner_df
+                print(all_winner_df)
                 actions[0, t] = action_to_take                                                  # add action in placeholder
                 #actions[0, t] = act
 
@@ -82,6 +94,9 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
                     env.render()
                 if done:
                     break               
+    print(all_winner_df)
+    output_file_path = 'C:/Users/Marta/OneDrive/Escritorio/sergio/poli2/outputRL.xlsx'  # Cambia esto por la ruta donde deseas guardar el archivo
+    all_winner_df.to_excel(output_file_path, index=False)
     results['eval/avg_reward'] = total_reward / num_eval_ep
     results['eval/avg_ep_len'] = total_timesteps / num_eval_ep
     return results
