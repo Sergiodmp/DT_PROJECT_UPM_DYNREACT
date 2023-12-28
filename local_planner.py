@@ -26,7 +26,7 @@ for i in range(120):
         action = expert_policy(obs)
         next_obs, reward, done, terminado, total_cost = env.step(action)
         obs=next_obs
-        print(i)
+        #print(i)
 #print(record_df)
 print(env.all_winner_df)
 output_file_path = 'C:/Users/Marta/OneDrive/Escritorio/sergio/poli2/output.xlsx'  # Cambia esto por la ruta donde deseas guardar el archivo

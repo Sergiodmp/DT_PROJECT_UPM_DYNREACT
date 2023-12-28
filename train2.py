@@ -231,10 +231,10 @@ def train(args):
         csv_writer.writerow(log_data)
         # save model
         print("max d4rl score: " + format(max_d4rl_score, ".5f"))
-        '''if eval_d4rl_score >= max_d4rl_score:
+        if eval_d4rl_score >= max_d4rl_score:
             print("saving max d4rl score model at: " + save_best_model_path)
             torch.save(model.state_dict(), save_best_model_path)
-            max_d4rl_score = eval_d4rl_score'''
+            max_d4rl_score = eval_d4rl_score
 
         print("saving current model at: " + save_model_path)
         torch.save(model.state_dict(), save_model_path)

@@ -66,13 +66,20 @@ class env_va(gym.Env):
                 self.coil_with_min_cost=self.results_2.iloc[0]['Coil']
                 self.coils2_df=self.snapshot.loc[:,'Coil number example'] 
                 self.coils2=self.snapshot['Coil number example'].values
+                self.acciones_tomadas = set()
                 return self.costcoils
 
         def step(self,action):
             if action in self.snapshot['Coil number example'].values:
-                    bandera=1
+                    
+                    if action in self.acciones_tomadas:
+                           bandera=0
+                    else:
+                           bandera=1
+                           self.acciones_tomadas.add(action)
             else:
                     bandera=0
+            
             if bandera==1:
                     self.assess_costs_coil = asf.va_bid_evaluation(self.df_parameters_energy,self.snapshot,self.price_energy_consumption,self.winner_df) 
                     self.jid_list_2=self.assess_costs_coil.loc[:,'Coil number example'].tolist()
@@ -121,4 +128,4 @@ class env_va(gym.Env):
 
             info={}
 
-            return self.costcoils, reward, done, terminado, listofstates
+            return self.state, reward, done, terminado, listofstates

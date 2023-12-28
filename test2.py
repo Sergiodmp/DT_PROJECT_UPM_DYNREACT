@@ -37,8 +37,8 @@ def test(args):
     env_data_stats = get_d4rl_dataset_stats(eval_env_d4rl_name)
     eval_state_mean = np.array(env_data_stats['state_mean'])
     eval_state_std = np.array(env_data_stats['state_std'])
-    #state_dim = eval_env.observation_space.shape[0]
-    state_dim =eval_env.observation_space.n
+    state_dim = eval_env.observation_space.shape[0]
+    #state_dim =eval_env.observation_space.n
     act_dim = eval_env.action_space.n
     all_scores = []
     for eval_chk_pt_name in eval_chk_pt_list:
@@ -91,8 +91,8 @@ if __name__ == "__main__":
     parser.add_argument('--num_eval_ep', type=int, default=1)
     parser.add_argument("--render", action="store_true", default=False)
     parser.add_argument('--chk_pt_dir', type=str, default='dt_runs/')
-    parser.add_argument('--chk_pt_name', type=str,default='dt_env_va-medium-v2_model_23-12-13-08-06-24.pt')
-    parser.add_argument('--context_len', type=int, default=32)
+    parser.add_argument('--chk_pt_name', type=str,default='dt_env_va-medium-v2_model_23-12-28-22-58-55.pt')
+    parser.add_argument('--context_len', type=int, default=64)
     parser.add_argument('--n_blocks', type=int, default=3)
     parser.add_argument('--embed_dim', type=int, default=128)
     parser.add_argument('--n_heads', type=int, default=1)
