@@ -11,7 +11,7 @@ Model Training and Evaluation: Facilities to train the model and evaluate its pe
 Installation
 To get started with this project, clone the repository and install the necessary dependencies.
 
-'''git clone https://github.com/Sergiodmp/DT_PROJECT_UPM_DYNREACT/tree/main'''
+'''git clone https://github.com/Sergiodmp/DT_PROJECT_UPM_DYNREACT/tree/main
 
 ## Usage
 After setting up the project, follow these steps to train and evaluate the model:
