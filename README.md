@@ -11,7 +11,7 @@ Model Training and Evaluation: Facilities to train the model and evaluate its pe
 Installation
 To get started with this project, clone the repository and install the necessary dependencies.
 
-'''git clone https://github.com/Sergiodmp/DT_PROJECT_UPM_DYNREACT/tree/main
+git clone https://github.com/Sergiodmp/DT_PROJECT_UPM_DYNREACT/tree/main
 
 ## Usage
 After setting up the project, follow these steps to train and evaluate the model:
@@ -25,8 +25,7 @@ This step will generate a .pt file representing the trained model.
 
 Evaluating the Model: To view the results and analyze the learning process, run plot.py.
 
-bash
-Copy code
+```bash```
 python plot.py
 The model operates on data extracted from an Excel file, detailing the number of coils and their specific characteristics that need to be scheduled.
 
