@@ -18,8 +18,7 @@ After setting up the project, follow these steps to train and evaluate the model
 
 Training the Model: Run train2.py using the included dataset or your own dataset.
 
-bash
-Copy code
+```bash```
 python train2.py
 This step will generate a .pt file representing the trained model.
 
