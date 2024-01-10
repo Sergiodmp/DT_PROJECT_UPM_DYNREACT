@@ -25,7 +25,7 @@ This step will generate a .pt file representing the trained model.
 Evaluating the Model: To view the results and analyze the learning process, run plot.py.
 
 ```bash```
-python plot.py
+```python``` plot.py
 The model operates on data extracted from an Excel file, detailing the number of coils and their specific characteristics that need to be scheduled.
 
 ## Contributing
