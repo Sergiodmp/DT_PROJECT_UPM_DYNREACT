@@ -18,7 +18,6 @@ After setting up the project, follow these steps to train and evaluate the model
 
 Training the Model: Run ```train2.py``` using the included dataset or your own dataset. To create a dataset run ```dataset.py``` file using the policy you want. The dataset included in the repository was created using an 80% expert policy
 
-
 At the end of the training phase, a .pt file will be created.
 
 Evaluating the Model: To view the results and analyze the learning process, run ```plot.py``` and ```test2.py``` files.
