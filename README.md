@@ -29,9 +29,6 @@ The model operates on data extracted from an Excel file, detailing the number of
 ## Contributing
 Contributions to enhance the functionality or efficiency of this project are welcome. Feel free to fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-This project is licensed under the MIT License.
-
 ## Contact
 For any queries or collaborations, please reach out through the Issues section on GitHub.
 
