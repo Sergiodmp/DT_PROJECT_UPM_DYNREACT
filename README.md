@@ -16,14 +16,13 @@ To get started with this project, clone the repository and install the necessary
 ## Usage
 After setting up the project, follow these steps to train and evaluate the model:
 
-Training the Model: Run train2.py using the included dataset or your own dataset.
+Training the Model: Run ```train2.py``` using the included dataset or your own dataset. To create a dataset run ```dataset.py``` file using the policy you want. The dataset included in the repository was created using an 80% expert policy
 
-```train2.py```
-This step will generate a .pt file representing the trained model.
 
-Evaluating the Model: To view the results and analyze the learning process, run plot.py.
+At the end of the training phase, a .pt file will be created.
 
-```plot.py```
+Evaluating the Model: To view the results and analyze the learning process, run ```plot.py``` and ```test2.py``` files.
+
 The model operates on data extracted from an Excel file, detailing the number of coils and their specific characteristics that need to be scheduled.
 
 ## Contributing
