@@ -28,7 +28,7 @@ def plot(args):
     else:
         save_fig_path = env_d4rl_name + ".png"
 
-    all_files = glob.glob(log_dir + f'/dt_{env_d4rl_name}*.csv')
+    all_files = glob.glob(log_dir + f'*.csv')
     print(all_files)
 
     ax = plt.gca()
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser.add_argument('--env_d4rl_name', type=str, default='env_va-medium-v2')
     parser.add_argument('--log_dir', type=str, default='dt_runs/')
     parser.add_argument('--x_key', type=str, default='num_updates')
-    parser.add_argument('--y_key', type=str, default='eval_avg_reward')
+    parser.add_argument('--y_key', type=str, default='eval_d4rl_score')
     parser.add_argument('--smoothing_window', type=int, default=1)
     parser.add_argument("--plot_avg", action="store_true", default=False,
                     help="plot avg of all logs else plot separately")

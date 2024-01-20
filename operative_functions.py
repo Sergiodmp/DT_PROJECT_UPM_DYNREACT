@@ -31,6 +31,7 @@ def transport_cost(to):
 
 def energy_cost(df_parameters_energy, price_energy_consumption,coil_msgs_df,i):
     speed=500  #cambiar 500 mm/min
+    
     production_time=20 #cambiar
     to= coil_msgs_df.loc[0,'PLANT']
     if to == 'va09' or to == 'va10' or to == 'va11' or to == 'va12':
@@ -48,7 +49,7 @@ def energy_cost(df_parameters_energy, price_energy_consumption,coil_msgs_df,i):
         power = a + coil_msgs_df.loc[i,'FinalWidth'] * b + coil_msgs_df.loc[i,'Final Thickness (mm)'] * c + tinlayerup * d + tinlayerdown * e + speed*f
         #   Power [kw] =     a + Width-Out (VA) * b + Final Thickness * c + Tin Layer Up * d + Tin Layer Down * e + Speed (VA) * f [kw]
     else:
-        power=0
+        power=10000
     energy_demand = power * production_time / 60                                                       # KWh
     energy_cost= energy_demand * price_energy_consumption
     #print("coste energetico", energy_cost)
@@ -76,36 +77,36 @@ def va_rules(coil_msgs_df,i, winner_df):
             #print(coil_msgs_df.loc[i,'HRC Thickness (mm)'])
             if abs((winner_df.loc[0,'HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > 0.1:
                 accept = accept*0.3
-            '''if coil_msgs_df.loc[i,'single_reduction'] == 0:                                                                         
+            if coil_msgs_df.loc[i,'single_reduction'] == 0:                                                                         
                 
-                if abs((winner_df.iloc[-1]['initial_thickness']-coil_msgs_df.loc[i,'espesor'])) > winner_df.iloc[-1]['initial_thickness']*0.04:       
+                if abs((winner_df.iloc[-1]['HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > winner_df.iloc[-1]['HRC Thickness (mm)']*0.04:       
                     accept = accept*0.4 
-                    '''
+                    
         else:
             accept=1
     elif to == 'va10':
         if len(winner_df)>0:
-            '''
-            if winner_df.iloc[-1]['oel_sorte'] < coil_msgs_df.loc[i,'oel_sorte']:
+            
+            '''if winner_df.iloc[-1]['oel_sorte'] < coil_msgs_df.loc[i,'oel_sorte']:
                 accept = accept*0.2
             
-            else:
-                if abs((winner_df.iloc[-1]['HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > 0.05:
+            else:'''
+            if abs((winner_df.iloc[-1]['HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > 0.05:
                     accept = accept*0.2
-                    '''
+                    
     elif to == 'va11':
         if len(winner_df)>0:
             if abs((winner_df.iloc[-1]['HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > 0.1:
                     accept = accept*0.2
     elif to == 'va12':
-        '''
-        if coil_msgs_df.loc[i,'assivieru_ngkz'] != 555:
+        
+        '''if coil_msgs_df.loc[i,'assivieru_ngkz'] != 555:
             accept = accept*0.2
-        else:
-            if len(winner_df)>0:
+        else:'''
+        if len(winner_df)>0:
                 if abs((winner_df.iloc[-1]['HRC Thickness (mm)']-coil_msgs_df.loc[i,'HRC Thickness (mm)'])) > 0.1:
                     accept = accept*0.2
-    '''
+    
     return accept
 
 
@@ -151,13 +152,10 @@ def va_result(coil_ofertas_df, jid_list):
     column_names = ['Coil', 'cost', 'HRC Thickness (mm)', 'Final Thickness (mm)', 'HRC Width (mm)', 'FinalWidth']
     # Create empty DataFrame with specified columns
     df = pd.DataFrame(columns=column_names)
-    '''
-    if step == 'counterbid' :
-        df = pd.DataFrame([], columns=['Coil', 'Minimum_price', 'Bid',\
-                                   'Difference', 'Budget_remaining',\
-                                   'Counterbid','Profit'])
+    
+    
     #
-                                   '''
+                                   
     for i in range(len(jid_list)):
         df.at[i, 'Coil'] = coil_ofertas_df.loc[i, 'Coil number example']
         df.at[i, 'cost'] = coil_ofertas_df.loc[i, 'cost']

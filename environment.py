@@ -12,7 +12,7 @@ class env_va(gym.Env):
         def __init__(self):
                 self.price_energy_consumption = 0.222 #euros/KWh
                 done=False
-                self.index_va = ['va09', 'va10', 'va11', 'va11', 'va12', 'va12']
+                self.index_va = ['va09', 'va10', 'va11', 'va12', 'va13', 'va14']
                 self.df_parameters_energy=pd.DataFrame({
                                 'a': [-4335, -4335, -8081.22, -141,-6011.6, -3855.45],
                                 'b': [2.1, 2.1, 4.31, 3.27, 3.83, 2.4],
@@ -26,12 +26,13 @@ class env_va(gym.Env):
                                                         usecols= 'A:T', engine= 'openpyxl')
                 self.jobs=len(self.snapshot.axes[0]) #number of coils that have to be processed
                 #self.action_space = gym.spaces.Discrete(self.jobs) 
-                self.action_space = gym.spaces.Discrete(self.jobs+2)
+                #self.action_space = gym.spaces.Discrete(self.jobs+2)
+                self.action_space = gym.spaces.Discrete(64)
                 #self.observation_space = gym.spaces.Box(low=np.array([0]), high=np.array([100000000])) #the observation space is the actual cost of the whole production
                 #self.observation_space =gym.spaces.Discrete(self.jobs)
                 #self.observation_space = gym.spaces.Box(low=0, high=10000, shape=(1,), dtype=np.float32)
-                self.observation_space = gym.spaces.Box(low=np.full((self.jobs,), -np.inf), 
-                                        high=np.full((self.jobs,), np.inf), 
+                self.observation_space = gym.spaces.Box(low=np.full((62,), -np.inf), 
+                                        high=np.full((62,), np.inf), 
                                         dtype=np.float32)
                 self.state= 0 #overall cost (initial state)
                 self.manager_lenth=50
@@ -128,4 +129,4 @@ class env_va(gym.Env):
 
             info={}
 
-            return self.state, reward, done, terminado, listofstates
+            return listofstates, reward, done, terminado, listofstates

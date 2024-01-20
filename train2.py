@@ -77,7 +77,7 @@ def train(args):
     dropout_p = args.dropout_p          # dropout probability
 
     # load data from this file
-    dataset_path = 'dataset_2412_17.pkl'
+    dataset_path = 'dataset_99porcien.pkl'
     train_ds_size = int(0.9 * len(dataset_path))
     val_ds_size = len(dataset_path) - train_ds_size
     train_ds_raw, val_ds_raw = random_split(dataset_path, [train_ds_size, val_ds_size])
@@ -128,7 +128,8 @@ def train(args):
     act_dim = env.action_space.shape[0]'''
     state_dim = env.observation_space.shape[0]   #it takes the shape that we have established in the environment
     #state_dim =env.observation_space.n          #si fijamos los estados como discretos
-    act_dim = env.action_space.n
+    #act_dim = env.action_space.n
+    act_dim=64
     
     #################################################################################################################SUPERVISED 28/06
     
@@ -220,13 +221,13 @@ def train(args):
                 "action loss: " +  format(mean_action_loss, ".5f") + '\n' +
                 "eval avg reward: " + format(eval_avg_reward, ".5f") + '\n' +
                 "eval avg ep len: " + format(eval_avg_ep_len, ".5f") + '\n' #+
-                #"eval d4rl score: " + format(eval_d4rl_score, ".5f")
+                "eval d4rl score: " + format(eval_d4rl_score, ".5f")
             )
 
         print(log_str)
         log_data = [time_elapsed, total_updates, mean_action_loss,
-                    eval_avg_reward, eval_avg_ep_len]
-                    #eval_d4rl_score]
+                    eval_avg_reward, eval_avg_ep_len,
+                    eval_d4rl_score]
 
         csv_writer.writerow(log_data)
         # save model
@@ -261,12 +262,12 @@ if __name__ == "__main__":
     parser.add_argument('--num_eval_ep', type=int, default=1)
     parser.add_argument('--dataset_dir', type=str, default='data/')
     parser.add_argument('--log_dir', type=str, default='dt_runs/')
-    parser.add_argument('--context_len', type=int, default=64)
+    parser.add_argument('--context_len', type=int, default=64)    #64
     parser.add_argument('--n_blocks', type=int, default=3)
     parser.add_argument('--embed_dim', type=int, default=128)
     parser.add_argument('--n_heads', type=int, default=1)
     parser.add_argument('--dropout_p', type=float, default=0.1)
-    parser.add_argument('--batch_size', type=int, default=64)                       
+    parser.add_argument('--batch_size', type=int, default=64)     #64                  
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--wt_decay', type=float, default=1e-4)
     parser.add_argument('--warmup_steps', type=int, default=10000)
