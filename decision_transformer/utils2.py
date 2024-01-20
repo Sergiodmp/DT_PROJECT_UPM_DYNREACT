@@ -35,15 +35,20 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
     total_reward = 0
     total_timesteps = 0
     state_dim = env.observation_space.shape[0]
-    act_dim = env.action_space.n
-    state_mean = torch.zeros((state_dim,)).to(device) if state_mean is None else torch.from_numpy(state_mean).to(device)
-    state_std = torch.ones((state_dim,)).to(device) if state_std is None else torch.from_numpy(state_std).to(device)
+    #print("state_dim", state_dim)
+    #act_dim = env.action_space.n
+    act_dim=62
+    #state_mean = torch.zeros((state_dim,)).to(device) if state_mean is None else torch.from_numpy(state_mean).to(device)
+    #state_std = torch.ones((state_dim,)).to(device) if state_std is None else torch.from_numpy(state_std).to(device)
+    state_mean = torch.zeros((state_dim,)).to(device) 
+    state_std = torch.ones((state_dim,)).to(device) 
     timesteps = torch.arange(start=0, end=max_test_ep_len, step=1)
     timesteps = timesteps.repeat(eval_batch_size, 1).to(device)
 
     model.eval()
     with torch.no_grad():
         for _ in range(num_eval_ep):
+            acciones_tomadas = set()
             #actions = torch.zeros((eval_batch_size, max_test_ep_len, act_dim), dtype=torch.float64, device=device)
             actions = torch.zeros((eval_batch_size, max_test_ep_len), dtype=torch.long, device=device)
             states = torch.zeros((eval_batch_size, max_test_ep_len, state_dim), dtype=torch.float64, device=device)
@@ -54,12 +59,29 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
             running_rtg = rtg_target / rtg_scale
             winner_df= pd.DataFrame()
             all_winner_df =   pd.DataFrame()
+
+
             i=0
             for t in range(max_test_ep_len):
-                running_state = running_state.astype(np.float64)
-                #states[0, t] = torch.from_numpy(running_state).to(device)
-                states[0, t] = torch.from_numpy(np.array([running_state])).to(device)
+                if isinstance(running_state, np.ndarray):
+                    # Convertir de np.ndarray a Tensor y luego a device
+                    running_state = torch.from_numpy(running_state.astype(np.float64)).to(device)
+                elif isinstance(running_state, torch.Tensor):
+                    running_state = running_state.to(device)
 
+                # Asegurarse de que el tamaño del tensor sea el adecuado
+                if running_state.size(0) < 62:
+                    padding = torch.zeros(62 - running_state.size(0), device=device)
+                    running_state = torch.cat((running_state, padding))
+
+                states[0, t] = running_state
+
+                #running_state = running_state.astype(np.float64)
+                
+                #states[0, t] = torch.from_numpy(np.array([running_state])).to(device)
+                #print("Shape of states[0, t]:", states[0, t].shape)
+                #print("Shape of state_mean:", state_mean.shape)
+                #print("Shape of state_std:", state_std.shape)
                 states[0, t] = (states[0, t] - state_mean) / state_std
                 i+=1
 
@@ -72,30 +94,42 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
                                                                                                     # Aquí continua el código para tomar la acción y actualizar el entorno
                                                                                                     # Primero, identificamos la acción con la puntuación más alta en la predicción
                                                                                                     # Utilizamos torch.argmax() para obtener el índice de la puntuación más alta en cada fila.
-                predicted_action = torch.argmax(act_preds[0, -1])                                   # predicted_action es ahora un tensor que contiene el índice de la acción con la puntuación más alta.
-
                 
-                print(env.snapshot)
-                action_to_take = predicted_action.item()  
-                print("accion escogida", action_to_take)
-                print("i",i)
-                
-                running_state, running_reward, done, _, total_cost= env.step(action_to_take)
-                print("coste de accion asociada", running_state)
-                #print(env.snapshot)
-                all_winner_df=env.all_winner_df
-                print(all_winner_df)
-                actions[0, t] = action_to_take                                                  # add action in placeholder
-                #actions[0, t] = act
+                predicted_action = torch.argmax(act_preds[0, -1]).item()
 
-                total_reward += running_reward
+                # Lista de todas las acciones en orden descendente según su puntuación
+                sorted_actions = torch.argsort(act_preds[0, -1], descending=True).tolist()
 
-                if render:
-                    env.render()
-                if done:
-                    break               
+                # Selecciona la siguiente mejor acción que no ha sido tomada
+                for action in sorted_actions:
+                    if action not in acciones_tomadas:
+                        predicted_action = action
+                        break
+
+                # Agrega la acción seleccionada al conjunto de acciones tomadas
+                acciones_tomadas.add(predicted_action)
+
+                # Reinicia el conjunto si todas las acciones han sido seleccionadas
+                if len(acciones_tomadas) >= act_dim:
+                    acciones_tomadas.clear()
+
+                # Ejecuta la acción en el entorno si está en el conjunto de bobinas disponibles
+                if predicted_action in env.snapshot.loc[:,'Coil number example'].values:
+                    running_state, running_reward, done, _, total_cost = env.step(predicted_action)
+                    all_winner_df = env.all_winner_df
+
+                    print(all_winner_df)
+                    actions[0, t] = predicted_action                                                 # add action in placeholder
+                    #actions[0, t] = act
+
+                    total_reward += running_reward
+
+                    if render:
+                        env.render()
+                    if done:
+                        break               
     print(all_winner_df)
-    output_file_path = 'C:/Users/Marta/OneDrive/Escritorio/sergio/poli2/outputRL.xlsx'  # Cambia esto por la ruta donde deseas guardar el archivo
+    output_file_path = 'C:/Users/Marta/OneDrive/Escritorio/sergio/poli2/outputRL_allvas_1401.xlsx'  # Cambia esto por la ruta donde deseas guardar el archivo
     all_winner_df.to_excel(output_file_path, index=False)
     results['eval/avg_reward'] = total_reward / num_eval_ep
     results['eval/avg_ep_len'] = total_timesteps / num_eval_ep
